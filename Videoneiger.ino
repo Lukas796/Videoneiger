@@ -1,18 +1,14 @@
-int pins[] = {53, 52, 51, 50};
+#include "ledsteuerung.h"
+#include "axis_control.h"
+#include "UART.h"
 
 void setup() {
-  for (int i = 0; i < 4; i++) {
-    pinMode(pins[i], OUTPUT);
-  }
+  initLED();
+  uart_init(9600);
+  uart_sendText("UART bereit!");
 }
 
 void loop() {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      digitalWrite(pins[j], LOW);
-    }
-
-    digitalWrite(pins[i], HIGH);
-    delay(1000);
-  }
+ // uart_test_programm();
+  uart_get_positions();
 }
