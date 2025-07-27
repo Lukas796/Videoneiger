@@ -1,0 +1,12 @@
+# Arduino IDE build files
+*.elf
+*.hex
+*.bin
+*.eep
+*.map
+*.d
+*.o
+*.a
+.build/
+.vscode/
+.DS_Store
