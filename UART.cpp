@@ -1,8 +1,8 @@
 #include "uart.h"
 #include "ledsteuerung.h"
 
-int xPos = 0
-int yPos = 0
+int xPos = 0;
+int yPos = 0;
 
 void uart_init(unsigned long baudrate) {
   Serial.begin(baudrate);
@@ -42,22 +42,36 @@ void uart_test_programm () {
     }
   }
 
-  void uart_get_positions() {
-    if (Serial.available()) {
-      String msg = Serial.readStringUntil('\n');
-      Serial.println("Empfangen: " + msg);
+static const int testPoints[4][2] = {
+  { -100,   0 },   // links
+  {    0,  100 },  // oben
+  {  100,   0 },   // rechts
+  {    0, -100 }   // unten
+};
 
-      // Extrahiere X und Y (optional)
-      int x = msg.substring(msg.indexOf("X:") + 2, msg.indexOf(",Y:")).toInt();
-      int y = msg.substring(msg.indexOf("Y:") + 2).toInt();
-      // Speichere in die globalen Variablen
-      xPos = x;
-      yPos = y;
+// Merker für den nächsten Testpunkt
+static uint8_t testIndex = 0;
 
-      // z. B. LED blinken bei x > 200
 
-      if (x >= 250) setLED();
-      if (x <= 250) resetLED();
-      Serial.println("X = " + String(x) + ", Y = " + String(y));
-    }
-  }
+void uart_get_positions() {
+  if (Serial.available()) {
+    String msg = Serial.readStringUntil('\n');
+    //Serial.println("Empfangen: " + msg);
+
+    // Extrahiere X und Y (optional)
+    int x = msg.substring(msg.indexOf("X:") + 2, msg.indexOf(",Y:")).toInt();
+    int y = msg.substring(msg.indexOf("Y:") + 2).toInt();
+    // Speichere in die globalen Variablen
+    xPos = x;
+    yPos = y;
+
+    // z. B. LED blinken bei x > 200
+    if (x >= 250) setLED();
+    if (x <= 250) resetLED();
+    Serial.println("X = " + String(x) + ", Y = " + String(y));
+  }//else{ 
+  //xPos = testPoints[testIndex][0];
+  //yPos = testPoints[testIndex][1];
+  //testIndex = (testIndex + 1) % 4;
+  //}
+}
