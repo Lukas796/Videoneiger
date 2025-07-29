@@ -1,6 +1,9 @@
 #include "uart.h"
 #include "ledsteuerung.h"
 
+int xPos = 0
+int yPos = 0
+
 void uart_init(unsigned long baudrate) {
   Serial.begin(baudrate);
   while (!Serial) {
@@ -47,6 +50,10 @@ void uart_test_programm () {
       // Extrahiere X und Y (optional)
       int x = msg.substring(msg.indexOf("X:") + 2, msg.indexOf(",Y:")).toInt();
       int y = msg.substring(msg.indexOf("Y:") + 2).toInt();
+      // Speichere in die globalen Variablen
+      xPos = x;
+      yPos = y;
+
       // z. B. LED blinken bei x > 200
 
       if (x >= 250) setLED();

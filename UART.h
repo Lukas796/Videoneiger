@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 
+extern int xPos;
+extern int yPos;
+
 void uart_init(unsigned long baudrate);
 bool uart_available();
 String uart_readLine();
