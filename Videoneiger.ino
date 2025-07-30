@@ -4,7 +4,7 @@
 
 void setup() {
   initLED();
-  uart_init(9600);
+  uart_init(115200);
   uart_sendText("UART bereit!");
 }
 
