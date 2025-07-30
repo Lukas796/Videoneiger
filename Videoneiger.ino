@@ -5,8 +5,8 @@
 
 void setup() {
   initLED();
-  uart_init(115200);
-  uart_sendText("UART bereit!");
+  USART_Init(115200);
+  USART_SendString("UART bereit!");
   initPins();
 }
 
