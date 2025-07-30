@@ -11,12 +11,12 @@ const int PIN_BTN_LEFT  = 50;
 const int PIN_BTN_RIGHT = 52;
 
 // ---- Steuerungs-Intervalle & Hysterese ----
-const unsigned long CONTROL_INTERVAL = 500;   // ms zwischen zwei Regel­aktionen
+const unsigned long CONTROL_INTERVAL = 1000;   // ms zwischen zwei Regel­aktionen
 
-const int X_HYST_HIGH =  50;   // x > +100 → links drücken
-const int X_HYST_LOW  = -50;   // x < -100 → rechts drücken
-const int Y_HYST_HIGH =  50;   // y > +100 → unten drücken
-const int Y_HYST_LOW  = -50;   // y < -100 → oben drücken
+const int X_HYST_HIGH =  100;   // x > +100 → links drücken
+const int X_HYST_LOW  = -100;   // x < -100 → rechts drücken
+const int Y_HYST_HIGH =  100;   // y > +100 → unten drücken
+const int Y_HYST_LOW  = -100;   // y < -100 → oben drücken
 
 unsigned long lastControlTime = 0;
 
