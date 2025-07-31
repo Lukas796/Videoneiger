@@ -11,7 +11,7 @@ const int PIN_BTN_LEFT  = 50;
 const int PIN_BTN_RIGHT = 52;
 
 // ---- Steuerungs-Intervalle & Hysterese ----
-const unsigned long CONTROL_INTERVAL = 100;   // ms zwischen zwei Regel­aktionen
+const unsigned long CONTROL_INTERVAL = 600;   // ms zwischen zwei Regel­aktionen
 
 const int X_HYST_HIGH =  100;   // x > +100 → links drücken
 const int X_HYST_LOW  = -100;   // x < -100 → rechts drücken

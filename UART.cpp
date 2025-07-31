@@ -15,29 +15,23 @@ volatile uint8_t usart_rx_tail = 0;
 
 
 void USART_Init(unsigned long baud) {
-  uint16_t ubrr = F_CPU/16/baud - 1;    // UBRR-Wert berechnen
-  UBRR0H = (uint8_t)(ubrr >> 8);        // obere 8 Bit
-  UBRR0L = (uint8_t)ubrr;               // untere 8 Bit
+  // Double-Speed aktivieren für höhere Baudraten
+  UCSR0A = (1 << U2X0);
 
-  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);// 8 Datenbits, kein Parity, 1 Stopbit
-  UCSR0B = (1 << TXEN0) | (1 << RXEN0);  // TX und RX aktiv
+  // Baudraten-Berechnung im Double-Speed-Modus
+  uint16_t ubrr = F_CPU/8/baud - 1;
+  UBRR0H = ubrr >> 8;
+  UBRR0L = ubrr & 0xFF;
+
+  // Frame Format: 8N1
+  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+
+  // TX, RX und RX-Complete-Interrupt aktivieren
+  UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0);
+
+  sei(); // Globale Interrupts freigeben
 }
 
-
-//bool uart_available() {
-//  return Serial.available() > 0;
-//}
-
-//String uart_readLine() {
-//  if (!uart_available()) return "";
-//  String input = Serial.readStringUntil('\n');
-//  input.trim(); // Zeilenumbruch und Leerzeichen entfernen
-//  return input;
-//}
-
-//void uart_sendText(const String& text) {
-//  Serial.println(text);
-//}
 
 void USART_SendData(uint8_t data) {													// Sendet ein einzelnes Byte über die USART-Schnittstelle  
 	while (!(UCSR0A & (1 << UDRE0)));												// Wartet, bis das USART-Datenregister leer ist (bereit zur Übertragung)  
@@ -88,23 +82,6 @@ void uart_read_line(char *buffer, uint8_t max_length) {
   buffer[i - 1] = '\0';  // LF durch Terminator ersetzen
 }
 
-
-//void uart_test_programm() {
-//  if (uart_available()) {
-//    String cmd = uart_readLine();
-//
-//   if (cmd == "LED ON") {
-//      setLED();
-//      uart_sendText("LED an");
-//    } else if (cmd == "LED OFF") {
-//      resetLED();
-//      uart_sendText("LED aus");
-//    } else {
-//      uart_sendText("Unbekannter Befehl: " + cmd);
-//    }
-//  }
-//}
-
 static const int testPoints[4][2] = {
   { -300, 0 },  // links
   { 0, 300 },   // oben
@@ -128,8 +105,8 @@ void uart_get_positions() {
     int x = 0, y = 0;
     // Pattern "X:%d,Y:%d" erkennen
     if (sscanf(msg, "X:%d,Y:%d", &x, &y) == 2) {
-      xPos = x;
-      yPos = y;
+      //xPos = x;
+      //yPos = y;
 
       if (x >= 250) setLED();
       else          resetLED();
