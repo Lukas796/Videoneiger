@@ -4,8 +4,8 @@
 #include <avr/io.h>
 
 
-int xPos = 0;
-int yPos = 0;
+volatile int16_t xPos = 0;
+volatile int16_t yPos = 0;
 
 // === UART Ringpuffer ===
 #define USART_BUFFER_SIZE 64
@@ -105,23 +105,20 @@ void uart_get_positions() {
     int x = 0, y = 0;
     // Pattern "X:%d,Y:%d" erkennen
     if (sscanf(msg, "X:%d,Y:%d", &x, &y) == 2) {
-      //xPos = x;
-      //yPos = y;
-
-      if (x >= 250) setLED();
-      else          resetLED();
+      xPos = x;
+      yPos = y;
 
       char buf[12];                              // Puffer für Zahlen als String
 
       // Text vor der Zahl
-      USART_SendString("X = ");
+      USART_SendString("X:");
 
       // x in ASCII umwandeln und senden
       itoa(x, buf, 10);                          // Basis 10
       USART_SendString(buf);
 
       // Zwischen­text
-      USART_SendString(", Y = ");
+      USART_SendString(",Y:");
 
       // y in ASCII umwandeln und senden
       itoa(y, buf, 10);

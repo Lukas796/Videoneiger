@@ -1,8 +1,8 @@
 // ---- Position_Control.ino ----
 
 #include "UART.h"        // oder "UART.h", je nachdem, wie ihr eure Header-Datei nennt
-extern int xPos;          // aus USART.cpp
-extern int yPos;          // aus USART.cpp
+extern volatile int16_t xPos;
+extern volatile int16_t yPos;
 
 // ---- Pin-Definitionen ----
 const int PIN_BTN_UP    = 51;

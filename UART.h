@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-extern int xPos;
-extern int yPos;
+extern volatile int16_t xPos;
+extern volatile int16_t yPos;
 
 void USART_Init(unsigned long baud);
 void USART_SendData(uint8_t data);
