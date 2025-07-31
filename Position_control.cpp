@@ -34,12 +34,57 @@ void regulatePosition() {
   if (now - lastControlTime < CONTROL_INTERVAL) return;
   lastControlTime = now;
 
-  // X-Achse regeln
-  if      (xPos >  X_HYST_HIGH) pressButton(PIN_BTN_LEFT,  500);
-  else if (xPos <  X_HYST_LOW)  pressButton(PIN_BTN_RIGHT, 500);
+  if (xPos > X_HYST_HIGH) {
+    // Positivabweichung nach links korrigieren
+    if (xPos > 1000) {
+      pressButton(PIN_BTN_LEFT, 900);
+    }
+    else if (xPos > 500) {
+      pressButton(PIN_BTN_LEFT, 700);
+    }
+    else {
+      pressButton(PIN_BTN_LEFT, 500);
+    }
+  }
+  else if (xPos < X_HYST_LOW) {
+    // Negativabweichung nach rechts korrigieren
+    int err = -xPos;  // Betrag
+    if (err > 1000) {
+      pressButton(PIN_BTN_RIGHT, 900);
+    }
+    else if (err > 500) {
+      pressButton(PIN_BTN_RIGHT, 700);
+    }
+    else {
+      pressButton(PIN_BTN_RIGHT, 500);
+    }
+  }
 
   // Y-Achse regeln
-  if      (yPos >  Y_HYST_HIGH) pressButton(PIN_BTN_DOWN,  500);
-  else if (yPos <  Y_HYST_LOW)  pressButton(PIN_BTN_UP,    500);
+  if (yPos > Y_HYST_HIGH) {
+    // Positivabweichung nach unten korrigieren
+    if (yPos > 400) {
+      pressButton(PIN_BTN_DOWN, 900);
+    }
+    else if (yPos > 200) {
+      pressButton(PIN_BTN_DOWN, 700);
+    }
+    else {
+      pressButton(PIN_BTN_DOWN, 500);
+    }
+  }
+  else if (yPos < Y_HYST_LOW) {
+    // Negativabweichung nach oben korrigieren
+    int err = -yPos;
+    if (err > 400) {
+      pressButton(PIN_BTN_UP, 900);
+    }
+    else if (err > 200) {
+      pressButton(PIN_BTN_UP, 700);
+    }
+    else {
+      pressButton(PIN_BTN_UP, 500);
+    }
+  }
 }
 
