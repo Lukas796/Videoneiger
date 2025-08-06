@@ -9,6 +9,9 @@ void setup() {
   initLED();
   USART_Init(115200);
   USART_SendString("UART bereit!");
+  // Zeilenumbruch (CR+LF)
+  USART_SendData('\r');
+  USART_SendData('\n');
   initPins();
 }
 
