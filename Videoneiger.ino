@@ -17,5 +17,5 @@ void setup() {
 
 void loop() {
   uart_get_positions();   // aktualisiert xPos und yPos aus dem seriellen Puffer
-  regulatePosition();     // nutzt die neuen Werte
+  regulateContinuous();   // kontinuierliche Regelung 
 }

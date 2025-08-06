@@ -2,6 +2,6 @@
 #define Position_control
 
 #include <Arduino.h>
-void regulatePosition();
+void regulateContinuous();
 
 #endif
