@@ -11,10 +11,10 @@ const int PIN_BTN_LEFT  = 50;
 const int PIN_BTN_RIGHT = 52;
 
 
-const int X_HYST_HIGH =  300;   // x > +100 → links drücken
-const int X_HYST_LOW  = -300;   // x < -100 → rechts drücken
-const int Y_HYST_HIGH =  300;   // y > +100 → unten drücken
-const int Y_HYST_LOW  = -300;   // y < -100 → oben drücken
+const int X_HYST_HIGH =  100;   // x > +100 → links drücken
+const int X_HYST_LOW  = -100;   // x < -100 → rechts drücken
+const int Y_HYST_HIGH =  100;   // y > +100 → unten drücken
+const int Y_HYST_LOW  = -100;   // y < -100 → oben drücken
 
 // Statusvariablen
 enum Axis { AXIS_X, AXIS_Y };
