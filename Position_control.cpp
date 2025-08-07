@@ -12,7 +12,7 @@ const int PIN_BTN_RIGHT = 52;
 
 
 const int X_HYST_HIGH =  170;   // x > +100 → links drücken  --> good with Velocity 6 of V on PT500
-const int X_HYST_LOW  = -150;   // x < -100 → rechts drücken --> good with Velocity 6 of H on PT500
+const int X_HYST_LOW  = -170;   // x < -100 → rechts drücken --> good with Velocity 6 of H on PT500
 const int Y_HYST_HIGH =  100;   // y > +100 → unten drücken
 const int Y_HYST_LOW  = -100;   // y < -100 → oben drücken
 
