@@ -6,85 +6,70 @@ extern volatile int16_t yPos;
 
 // ---- Pin-Definitionen ----
 const int PIN_BTN_UP    = 51;
-const int PIN_BTN_DOWN  = 53 ;
+const int PIN_BTN_DOWN  = 53;
 const int PIN_BTN_LEFT  = 50;
 const int PIN_BTN_RIGHT = 52;
 
-// ---- Steuerungs-Intervalle & Hysterese ----
-const unsigned long CONTROL_INTERVAL = 1000;   // ms zwischen zwei Regel­aktionen
 
-const int X_HYST_HIGH =  100;   // x > +100 → links drücken
-const int X_HYST_LOW  = -100;   // x < -100 → rechts drücken
+const int X_HYST_HIGH =  170;   // x > +100 → links drücken  --> good with Velocity 6 of V on PT500
+const int X_HYST_LOW  = -170;   // x < -100 → rechts drücken --> good with Velocity 6 of H on PT500
 const int Y_HYST_HIGH =  100;   // y > +100 → unten drücken
 const int Y_HYST_LOW  = -100;   // y < -100 → oben drücken
 
-unsigned long lastControlTime = 0;
+// Statusvariablen
+enum Axis { AXIS_X, AXIS_Y };
+Axis currentAxis = AXIS_X;
 
-// Drückt einen Button-Pin für 'duration' Millisekunden
-void pressButton(int pin, int duration) {
-  digitalWrite(pin, HIGH);
-  //uart_sendText("Button aktiv");
-  delay(duration);
-  digitalWrite(pin, LOW);
-}
+// Merkt, ob gerade eine Taste gedrückt ist
+int activePin = -1;
 
-// Zweipunkt-Regel mit Hysterese – verwendet direkt xPos/yPos
-void regulatePosition() {
-  unsigned long now = millis();
-  if (now - lastControlTime < CONTROL_INTERVAL) return;
-  lastControlTime = now;
 
-  if (xPos > X_HYST_HIGH) {
-    // Positivabweichung nach links korrigieren
-    if (xPos > 1000) {
-      pressButton(PIN_BTN_LEFT, 900);
+void pressAndHold(int pin) {
+  if (activePin != pin) {
+    // Falls vorher eine andere Taste gedrückt war -> loslassen
+    if (activePin != -1) {
+      digitalWrite(activePin, LOW);
     }
-    else if (xPos > 500) {
-      pressButton(PIN_BTN_LEFT, 700);
-    }
-    else {
-      pressButton(PIN_BTN_LEFT, 500);
-    }
-  }
-  else if (xPos < X_HYST_LOW) {
-    // Negativabweichung nach rechts korrigieren
-    int err = -xPos;  // Betrag
-    if (err > 1000) {
-      pressButton(PIN_BTN_RIGHT, 900);
-    }
-    else if (err > 500) {
-      pressButton(PIN_BTN_RIGHT, 700);
-    }
-    else {
-      pressButton(PIN_BTN_RIGHT, 500);
-    }
-  }
-
-  // Y-Achse regeln
-  if (yPos > Y_HYST_HIGH) {
-    // Positivabweichung nach unten korrigieren
-    if (yPos > 400) {
-      pressButton(PIN_BTN_DOWN, 900);
-    }
-    else if (yPos > 200) {
-      pressButton(PIN_BTN_DOWN, 700);
-    }
-    else {
-      pressButton(PIN_BTN_DOWN, 500);
-    }
-  }
-  else if (yPos < Y_HYST_LOW) {
-    // Negativabweichung nach oben korrigieren
-    int err = -yPos;
-    if (err > 400) {
-      pressButton(PIN_BTN_UP, 900);
-    }
-    else if (err > 200) {
-      pressButton(PIN_BTN_UP, 700);
-    }
-    else {
-      pressButton(PIN_BTN_UP, 500);
-    }
+    // Neue Taste drücken
+    digitalWrite(pin, HIGH);
+    activePin = pin;
   }
 }
 
+void releaseButton() {
+  if (activePin != -1) {
+    digitalWrite(activePin, LOW);
+    activePin = -1;
+  }
+}
+
+void regulateContinuous() {
+  if (currentAxis == AXIS_X) {
+    // X-Achse regeln
+    if (xPos > X_HYST_HIGH) {
+      pressAndHold(PIN_BTN_LEFT);
+    } 
+    else if (xPos < X_HYST_LOW) {
+      pressAndHold(PIN_BTN_RIGHT);
+    } 
+    else {
+      // Zielbereich erreicht -> Taste loslassen und auf Y wechseln
+      releaseButton();
+      currentAxis = AXIS_Y;
+    }
+  } 
+  else if (currentAxis == AXIS_Y) {
+    // Y-Achse regeln
+    if (yPos > Y_HYST_HIGH) {
+      pressAndHold(PIN_BTN_DOWN);
+    } 
+    else if (yPos < Y_HYST_LOW) {
+      pressAndHold(PIN_BTN_UP);
+    } 
+    else {
+      // Zielbereich erreicht -> Taste loslassen und auf X wechseln
+      releaseButton();
+      currentAxis = AXIS_X;
+    }
+  }
+}
