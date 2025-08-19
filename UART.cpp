@@ -2,10 +2,7 @@
 #include "ledsteuerung.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
-
-
-volatile int16_t xPos = 0;
-volatile int16_t yPos = 0;
+#include "position_control.h"
 
 // === UART Ringpuffer ===
 #define USART_BUFFER_SIZE 64

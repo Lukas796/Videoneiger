@@ -1,8 +1,13 @@
 // ---- Position_Control.ino ----
-
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "Position_control.h"
+#include "uart.h"
+#include "spi.h"
 #include "UART.h"        // oder "UART.h", je nachdem, wie ihr eure Header-Datei nennt
-extern volatile int16_t xPos;
-extern volatile int16_t yPos;
+volatile int16_t xPos;
+volatile int16_t yPos;
 
 // ---- Pin-Definitionen ----
 const int PIN_BTN_UP    = 51;
@@ -72,4 +77,16 @@ void regulateContinuous() {
       currentAxis = AXIS_X;
     }
   }
+}
+
+uint8_t computeWiper(int16_t pos, int16_t hyst) {
+    int16_t absPos = (pos < 0) ? -pos : pos;
+    if (absPos <= hyst) return 128;
+
+    int32_t range = MAX_POS - hyst;
+    int32_t adj   = absPos - hyst;
+    if (adj > range) adj = range;
+
+    // skaliere [0…range] → [128…255]
+    return (uint8_t)(128 + (adj * 127) / range);
 }
