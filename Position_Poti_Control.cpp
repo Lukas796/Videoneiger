@@ -43,9 +43,9 @@ const uint8_t potiPosVel[8] = {
     POTI_POS_VEL_3,
     POTI_POS_VEL_4,
     POTI_POS_VEL_5,
-    POTI_POS_VEL_6,
-    POTI_POS_VEL_7,
-    POTI_POS_VEL_8
+    POTI_POS_VEL_5,
+    POTI_POS_VEL_5,
+    POTI_POS_VEL_5
 };
 
 const uint8_t potiNegVel[8] = {
@@ -54,9 +54,9 @@ const uint8_t potiNegVel[8] = {
     POTI_NEG_VEL_3,
     POTI_NEG_VEL_4,
     POTI_NEG_VEL_5,
-    POTI_NEG_VEL_6,
-    POTI_NEG_VEL_7,
-    POTI_NEG_VEL_8
+    POTI_NEG_VEL_5,
+    POTI_NEG_VEL_5,
+    POTI_NEG_VEL_5
 };
 // === Berechnungsfunktionen ===
 uint8_t calculatePotiValueX(int xPos) {
