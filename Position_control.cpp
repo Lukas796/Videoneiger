@@ -6,8 +6,9 @@
 #include "uart.h"
 #include "spi.h"
 #include "UART.h"        // oder "UART.h", je nachdem, wie ihr eure Header-Datei nennt
-volatile int16_t xPos;
-volatile int16_t yPos;
+
+//volatile int16_t xPos;
+//volatile int16_t yPos;
 
 // ---- Pin-Definitionen ----
 const int PIN_BTN_UP    = 51;

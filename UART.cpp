@@ -10,6 +10,8 @@ volatile uint8_t usart_rx_buffer[USART_BUFFER_SIZE];
 volatile uint8_t usart_rx_head = 0;
 volatile uint8_t usart_rx_tail = 0;
 
+unsigned long lastUpdateTime = 0;
+const unsigned long timeoutDuration = 500; // Zeit in ms ohne neue Daten → Stillstand
 
 void USART_Init(unsigned long baud) {
   // Double-Speed aktivieren für höhere Baudraten
@@ -105,6 +107,8 @@ void uart_get_positions() {
       xPos = x;
       yPos = y;
 
+      lastUpdateTime = millis();  // ⏱ Zeit merken
+
       char buf[12];                              // Puffer für Zahlen als String
 
       // Text vor der Zahl
@@ -126,9 +130,10 @@ void uart_get_positions() {
       USART_SendData('\n');
     }
   }
-  //else{
-  //xPos = testPoints[testIndex][0];
-  //yPos = testPoints[testIndex][1];
-  //testIndex = (testIndex + 1) % 4;
-  //}
+  // ⏱ Timeout-Check (auch wenn keine Daten verfügbar sind)
+  unsigned long now = millis();
+  if (now - lastUpdateTime > timeoutDuration) {
+    xPos = 0;
+    yPos = 0;
+  }
 }
