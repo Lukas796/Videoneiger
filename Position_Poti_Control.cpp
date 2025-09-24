@@ -37,27 +37,37 @@ volatile int16_t xPos;
 volatile int16_t yPos;
 
 // === Potiwerte als Arrays für bessere Zuordnung ===
-const uint8_t potiPosVel[8] = {
-    POTI_POS_VEL_3,
-    POTI_POS_VEL_3,
-    POTI_POS_VEL_3,
-    POTI_POS_VEL_4,
-    POTI_POS_VEL_5,
-    POTI_POS_VEL_5,
-    POTI_POS_VEL_5,
-    POTI_POS_VEL_5
-};
+volatile uint8_t potiPosVel[8];
+volatile uint8_t potiNegVel[8];
 
-const uint8_t potiNegVel[8] = {
-    POTI_NEG_VEL_3,
-    POTI_NEG_VEL_3,
-    POTI_NEG_VEL_3,
-    POTI_NEG_VEL_4,
-    POTI_NEG_VEL_5,
-    POTI_NEG_VEL_5,
-    POTI_NEG_VEL_5,
-    POTI_NEG_VEL_5
-};
+uint8_t getPotiPosValue(uint8_t velIndex) {
+  switch (velIndex) {
+    case 1: return POTI_POS_VEL_1;
+    case 2: return POTI_POS_VEL_2;
+    case 3: return POTI_POS_VEL_3;
+    case 4: return POTI_POS_VEL_4;
+    case 5: return POTI_POS_VEL_5;
+    case 6: return POTI_POS_VEL_6;
+    case 7: return POTI_POS_VEL_7;
+    case 8: return POTI_POS_VEL_8;
+    default: return POTI_POS_STOP;
+  }
+}
+
+uint8_t getPotiNegValue(uint8_t velIndex) {
+  switch (velIndex) {
+    case 1: return POTI_NEG_VEL_1;
+    case 2: return POTI_NEG_VEL_2;
+    case 3: return POTI_NEG_VEL_3;
+    case 4: return POTI_NEG_VEL_4;
+    case 5: return POTI_NEG_VEL_5;
+    case 6: return POTI_NEG_VEL_6;
+    case 7: return POTI_NEG_VEL_7;
+    case 8: return POTI_NEG_VEL_8;
+    default: return POTI_POS_STOP;
+  }
+}
+
 // === Berechnungsfunktionen ===
 uint8_t calculatePotiValueX(int xPos) {
     if (abs(xPos) < HYSTERESE) {
