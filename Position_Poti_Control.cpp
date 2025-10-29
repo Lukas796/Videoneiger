@@ -8,7 +8,7 @@
 
 // === Konfiguration ===
 #define X_END_BEREICH 700
-#define Y_END_BEREICH 250
+#define Y_END_BEREICH 350
 
 #define HYSTERESE 90
 

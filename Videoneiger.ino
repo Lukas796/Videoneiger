@@ -14,9 +14,9 @@ void setup() {
   USART_Init(115200);
   delay(500);                     // kurz warten nach Reset  
   USART_SendString("READY\r\n");     // OrangePi wartet auf dieses Signal
+  uart_wait_for_config(); 
   //USART_SendData('\r');
   //USART_SendData('\n');
-  uart_wait_for_config(); 
   
   initPins();
   sei();
