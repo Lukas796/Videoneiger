@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include "position_control.h"
+#include "Position_Poti_control.h"  
 
 // === UART Ringpuffer ===
 #define USART_BUFFER_SIZE 64
@@ -91,6 +92,125 @@ static const int testPoints[4][2] = {
 // Merker für den nächsten Testpunkt
 static uint8_t testIndex = 0;
 
+
+void parseConfigLine(const char* line) {
+  if (strncmp(line, "POS_TABLE:", 10) == 0) {
+    const char* data = line + 10;
+    for (int i = 0; i < 8; i++) {
+      potiPosVel[i] = getPotiPosValue(atoi(data));
+      data = strchr(data, ',');
+      if (!data && i < 7) break;
+      data++;
+    }
+  } else if (strncmp(line, "NEG_TABLE:", 10) == 0) {
+    const char* data = line + 10;
+    for (int i = 0; i < 8; i++) {
+      potiNegVel[i] = getPotiNegValue(atoi(data));
+      data = strchr(data, ',');
+      if (!data && i < 7) break;
+      data++;
+    }
+  }
+}
+
+// void debugPrintTables() {
+//   char buf[32];
+
+//   USART_SendString("DEBUG_POS: ");
+//   for (int i = 0; i < 8; i++) {
+//     itoa(potiPosVel[i], buf, 10);
+//     USART_SendString(buf);
+//     if (i < 7) USART_SendString(",");
+//   }
+//   USART_SendString("\r\n");
+
+//   USART_SendString("DEBUG_NEG: ");
+//   for (int i = 0; i < 8; i++) {
+//     itoa(potiNegVel[i], buf, 10);
+//     USART_SendString(buf);
+//     if (i < 7) USART_SendString(",");
+//   }
+//   USART_SendString("\r\n");
+
+//   USART_SendString("CONFIG_OK\r\n");
+// }
+
+// void uart_wait_for_config() {
+//   char line[64];
+//   bool posReceived = false;
+//   bool negReceived = false;
+//   bool configDone = false;
+
+//   //USART_SendString("UART bereit!\n");  // ⚠️ Damit OrangePi auf Start warten kann
+
+//   while (!configDone) {
+//     uart_read_line(line, sizeof(line));
+
+//     USART_SendString("Empfangen: ");
+//     USART_SendString(line);
+//     USART_SendString("\r\n");
+
+//     if (strncmp(line, "POS_TABLE:", 10) == 0) {
+//       parseConfigLine(line);
+//       posReceived = true;
+//       USART_SendString("ACK_POS\r\n");
+//     } 
+//     else if (strncmp(line, "NEG_TABLE:", 10) == 0) {
+//       parseConfigLine(line);
+//       negReceived = true;
+//       USART_SendString("ACK_NEG\r\n");
+
+//       // 🟡 Debug-Ausgabe der eingelesenen Werte
+//       debugPrintTables();
+//     } 
+//   }
+// }
+
+void uart_wait_for_config() {
+  char line[64];
+  bool posReceived = false;
+  bool negReceived = false;
+
+  while (!(posReceived && negReceived)) {
+    uart_read_line(line, sizeof(line));
+
+    USART_SendString("Empfangen: ");
+    USART_SendString(line);
+    USART_SendString("\r\n");
+
+    if (strncmp(line, "POS_TABLE:", 10) == 0) {
+      parseConfigLine(line);  // setzt potiPosVel[]
+      posReceived = true;
+      USART_SendString("ACK_POS\r\n");
+    } 
+    else if (strncmp(line, "NEG_TABLE:", 10) == 0) {
+      parseConfigLine(line);  // setzt potiNegVel[]
+      negReceived = true;
+      USART_SendString("ACK_NEG\r\n");
+    }
+  }
+
+  // 🔽 Ausgabe beider Tabellen, sobald beide empfangen wurden
+  char buf[32];
+
+  USART_SendString("DEBUG_POS: ");
+  for (int i = 0; i < 8; i++) {
+    itoa(potiPosVel[i], buf, 10);
+    USART_SendString(buf);
+    if (i < 7) USART_SendString(",");
+  }
+  USART_SendString("\r\n");
+
+  USART_SendString("DEBUG_NEG: ");
+  for (int i = 0; i < 8; i++) {
+    itoa(potiNegVel[i], buf, 10);
+    USART_SendString(buf);
+    if (i < 7) USART_SendString(",");
+  }
+  USART_SendString("\r\n");
+
+  USART_SendString("CONFIG_OK\r\n");
+}
 
 void uart_get_positions() {
   // Empfangs-Modus

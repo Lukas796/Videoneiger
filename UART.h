@@ -13,6 +13,7 @@ bool uart_data_available(void);
 uint8_t uart_read_data(void);
 void uart_read_line(char *buffer, uint8_t max_length);
 void uart_get_positions(void);
+void uart_wait_for_config(void);
 
 
 //bool uart_available();
